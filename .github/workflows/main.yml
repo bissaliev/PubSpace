@@ -12,6 +12,22 @@ jobs:
     test:
         runs-on: ubuntu-latest
 
+        env:
+            POSTGRES_USER: test_user
+            POSTGRES_PASSWORD: test_password
+            POSTGRES_DB: test_db
+            POSTGRES_HOST: localhost
+            POSTGRES_PORT: 5432
+            SECRET: 0873f7b1324fa9ec348ab66797df206ea88377e6d1d27b95fba206a758bbd66b
+            ACCESS_TOKEN_EXPIRE_SECOND: 3600
+            MAIL_SERVER: smtp.yandex.ru
+            MAIL_PORT: 465
+            MAIL_USERNAME: bissaliev@yandex.ru
+            MAIL_PASSWORD: atsqetohmltlhkip
+            VERIFICATION_TOKEN_LIFETIME_SECONDS: 3600
+            FRONTEND_URL: http://localhost:8000
+            BACKEND_CORS_ORIGINS: http://localhost,http://127.0.0.1
+
         services:
             postgres:
                 image: postgres:latest
@@ -43,40 +59,10 @@ jobs:
                   pip install -r requirements.txt
 
             - name: Run migrations
-              env:
-                  POSTGRES_USER: test_user
-                  POSTGRES_PASSWORD: test_password
-                  POSTGRES_DB: test_db
-                  POSTGRES_HOST: localhost
-                  POSTGRES_PORT: 5432
-                  SECRET: 0873f7b1324fa9ec348ab66797df206ea88377e6d1d27b95fba206a758bbd66b
-                  ACCESS_TOKEN_EXPIRE_SECOND: 3600
-                  MAIL_SERVER: smtp.yandex.ru
-                  MAIL_PORT: 465
-                  MAIL_USERNAME: bissaliev@yandex.ru
-                  MAIL_PASSWORD: atsqetohmltlhkip
-                  VERIFICATION_TOKEN_LIFETIME_SECONDS: 3600
-                  FRONTEND_URL: http://localhost:8000
-                  BACKEND_CORS_ORIGINS: http://localhost,http://127.0.0.1
               run: |
                   python3 -m src.init_db
 
             - name: Run tests
-              env:
-                  POSTGRES_USER: test_user
-                  POSTGRES_PASSWORD: test_password
-                  POSTGRES_DB: test_db
-                  POSTGRES_HOST: localhost
-                  POSTGRES_PORT: 5432
-                  SECRET: 0873f7b1324fa9ec348ab66797df206ea88377e6d1d27b95fba206a758bbd66b
-                  ACCESS_TOKEN_EXPIRE_SECOND: 3600
-                  MAIL_SERVER: smtp.yandex.ru
-                  MAIL_PORT: 465
-                  MAIL_USERNAME: bissaliev@yandex.ru
-                  MAIL_PASSWORD: atsqetohmltlhkip
-                  VERIFICATION_TOKEN_LIFETIME_SECONDS: 3600
-                  FRONTEND_URL: http://localhost:8000
-                  BACKEND_CORS_ORIGINS: http://localhost,http://127.0.0.1
               run: |
                   python3 -m flake8 src/
                   pytest tests/ -v
