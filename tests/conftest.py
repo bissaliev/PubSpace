@@ -14,7 +14,7 @@ from src.models.users import User
 
 # Настройка тестовой базы
 TEST_DATABASE_URL = (
-    "postgresql+asyncpg://test_user:test_password@localhost:5433/test_db"
+    "postgresql+asyncpg://test_user:test_password@localhost:5432/test_db"
 )
 
 
