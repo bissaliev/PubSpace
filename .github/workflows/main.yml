@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        services:
+            postgres:
+                image: postgres:latest
+                env:
+                    POSTGRES_USER: test_user
+                    POSTGRES_PASSWORD: test_password
+                    POSTGRES_DB: test_db
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.10"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+                  pip install pytest pytest-asyncio httpx asyncpg
+
+            - name: Run migrations
+              env:
+                  TEST_DATABASE_URL: postgresql+asyncpg://test_user:test_password@localhost:5432/test_db
+              run: |
+                  python3 -m src.init_db
+
+            - name: Run tests
+              env:
+                  TEST_DATABASE_URL: postgresql+asyncpg://test_user:test_password@localhost:5432/test_db
+              run: |
+                  python3 -m flake8 src/
+                  pytest tests/ -v
