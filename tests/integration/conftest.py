@@ -57,9 +57,10 @@ async def async_client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, 
 
 @pytest_asyncio.fixture
 async def superuser(db_session: AsyncSession) -> AsyncGenerator[User, None]:
+    pwd_helper = PasswordHelper()
     admin = User(
         email="admin@admin.com",
-        hashed_password="admin",
+        hashed_password=pwd_helper.hash("admin"),
         is_superuser=True,
     )
     db_session.add(admin)
@@ -78,8 +79,23 @@ async def user_db(db_session: AsyncSession) -> AsyncGenerator[User, None]:
 
 @pytest_asyncio.fixture
 async def async_auth_client(
-    db_session: AsyncSession,
-    superuser: User,
+    db_session: AsyncSession, user_db: User
+) -> AsyncGenerator[AsyncClient, None]:
+    """Авторизованный superuser"""
+    token = create_access_token({"sub": user_db.email})
+    app.dependency_overrides[get_db] = lambda: db_session
+    async with AsyncClient(
+        transport=ASGITransport(app),
+        base_url="http://test",
+        headers={"Authorization": f"Bearer {token}"},
+    ) as c:
+        yield c
+    app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def superuser_client(
+    db_session: AsyncSession, superuser: User
 ) -> AsyncGenerator[AsyncClient, None]:
     """Авторизованный superuser"""
     token = create_access_token({"sub": superuser.email})
@@ -89,5 +105,13 @@ async def async_auth_client(
         base_url="http://test",
         headers={"Authorization": f"Bearer {token}"},
     ) as c:
+        yield c
+    app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
+    app.dependency_overrides[get_db] = lambda: db_session
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as c:
         yield c
     app.dependency_overrides.clear()
