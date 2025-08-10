@@ -1,11 +1,10 @@
-import uuid
 from datetime import date
 
 from pydantic import BaseModel, EmailStr
 
 
 class UserRead(BaseModel):
-    id: uuid.UUID
+    id: int
     email: EmailStr
     first_name: str | None = None
     last_name: str | None = None
