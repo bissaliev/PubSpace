@@ -1,33 +1,7 @@
-[tool.flake8]
-max-line-length = 88
-ignore = [
-    "W503",
-    "F811"
-]
-exclude = [
-    "tests/",
-    "*/migrations/",
-    "venv/",
-    "*/venv/",
-    "env/",
-    "*/env/"
-]
-
-
-[tool.isort]
-profile = "black"
-src_paths = ["src"]
-known_first_party = ["src"]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-line_length = 88
-
 [tool.ruff]
-src = ["src"] # Указывает, что src/ — корень для импортов
+src = ["src"]
 line-length = 88
-target-version = "py310" # Укажите вашу версию Python (например, 3.10)
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "UP", "B", "SIM", "I", "ANN"] # Правила линтинга
