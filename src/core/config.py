@@ -9,6 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Setting(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
 
+    PYTHONPATH: str = ""
     BASE_DIR: Path = Path(__file__).parent.parent
     SECRET: str
     ALGORITHM: str = "HS256"
