@@ -1,25 +1,24 @@
 import asyncio
 from contextlib import asynccontextmanager
 
-from src.api.dependencies import get_user_manager
+from src.auth.hashing_password import PasswordHelper
 from src.db.database import get_db
-from src.schemas import SuperUserCreate
+from src.repositories.user_repo import UserRepository
 
-user_manager_context = asynccontextmanager(get_user_manager)
 get_db_context = asynccontextmanager(get_db)
 
 
-async def create_superuser():
+async def create_superuser() -> None:
     async with get_db_context() as db:
-        async with user_manager_context(db) as manager:
-            superuser = SuperUserCreate(
-                email="admin@admin.com",
-                password="admin",
-                is_superuser=True,
-                is_active=True,
-                is_verified=True,
-            )
-            await manager.create(superuser)
+        repo = UserRepository(db)
+        pwd_helper = PasswordHelper()
+        await repo.create(
+            email="admin@admin.com",
+            hashed_password=pwd_helper.hash("admin"),
+            is_superuser=True,
+            is_active=True,
+            is_verified=True,
+        )
 
 
 if __name__ == "__main__":
