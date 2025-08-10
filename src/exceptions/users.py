@@ -1,9 +1,4 @@
-class FastAPIUsersException(Exception):
-    pass
-
-
-class InvalidID(FastAPIUsersException):
-    pass
+from src.exceptions.base import FastAPIUsersException
 
 
 class UserAlreadyExists(FastAPIUsersException):
@@ -11,10 +6,6 @@ class UserAlreadyExists(FastAPIUsersException):
 
 
 class UserNotExists(FastAPIUsersException):
-    pass
-
-
-class UserInactive(FastAPIUsersException):
     pass
 
 
